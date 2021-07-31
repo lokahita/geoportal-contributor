@@ -23,7 +23,7 @@ export default function Data(props) {
     const username = getCookie('CONTRIBUTOR');
     //const base_domain = Config.base_domain;
 
-    const url_list = Config.api_domain + "/contribution/";
+    const url_list = Config.api_domain + "/contribution/username/"+username;
     const url_insert = Config.api_domain + "/contribution/";
     const url_update = Config.api_domain + "/contribution/update/";
     const url_delete = Config.api_domain + "/contribution/delete/";
