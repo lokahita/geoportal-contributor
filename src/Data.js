@@ -25,6 +25,7 @@ export default function Data(props) {
 
     const url_list = Config.api_domain + "/contribution/username/"+username;
     const url_insert_data = Config.api_domain + "/data/";
+    const url_publish_data = Config.api_domain + "/data/publish/";
     const url_insert = Config.api_domain + "/contribution/";
     const url_update = Config.api_domain + "/contribution/update/";
     const url_delete = Config.api_domain + "/contribution/delete/";
@@ -577,21 +578,19 @@ export default function Data(props) {
         err.innerHTML = 'please wait..';
 
         try {
-
-
-            var myHeaders = new Headers(); //YWRtaW46Z2Vvc2VydmVy
-            myHeaders.append("Authorization", auth);
-            myHeaders.append("Content-Type", "text/plain");
-            console.log(path)
-            console.log(shapeFile)
-            var requestOptions = {
-                method: 'PUT',
-                headers: myHeaders,
-                body: path + "/" + shapeFile,
-                redirect: 'follow'
+            const formData = new FormData();
+            formData.append('path', path + "/" + shapeFile);
+            formData.append('username', username);
+            
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
+                    'Authorization': token 
+                },
+                body: formData
             };
 
-            const response = await fetch(url_publish, requestOptions)
+            const response = await fetch(url_publish_data, requestOptions)
             console.log(response)
 
             //var rsp = await response.text();
@@ -633,7 +632,62 @@ export default function Data(props) {
                 err.innerHTML = `Error ${response.status} ${response.statusText}`;
                 console.error(`Error ${response.status} ${response.statusText}`);
             }
+            /*
+            var myHeaders = new Headers(); //YWRtaW46Z2Vvc2VydmVy
+            myHeaders.append("Authorization", auth);
+            myHeaders.append("Content-Type", "text/plain");
+            console.log(path)
+            console.log(shapeFile)
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: path + "/" + shapeFile,
+                redirect: 'follow'
+            };
 
+            const response = await fetch(url_publish_data, requestOptions)
+            console.log(response)
+
+            //var rsp = await response.text();
+            //console.log(json);
+            //console.log(json.status);
+
+            if (response.status === 201) {
+                //console.log(data);
+                //setAlert('d-block alert-success')
+                //setError('d-none')
+                //console.log(response)
+                //msg.innerHTML = "successfully uploaded.. wait for get wms url..";
+                //load_usulan();
+                // setId(0);
+                //setName("");
+                //setSelectedFile();
+                // setAddress("");
+                var reflect = document.getElementById('reflect');
+                reflect.innerHTML = "";
+                console.log(shapeFile);
+                console.log(url_reflect);
+                var img = document.createElement('img');
+                var refl = url_reflect + shapeFile
+                img.src = refl.replace(".shp", "");
+                img.addEventListener('load', (event) => {
+                    console.log('image has been loaded!');
+                    console.log(event);
+                    console.log(event.target.width);
+                    console.log(event.target.height);
+                    fetchGeoserver(event.target.width, event.target.height);
+                });
+                reflect.append(img);
+                //setGeoserverVisible(true);
+                //setFormVisible(false);
+                //<img src={url_reflect.replace(".shp", "")} />
+
+            } else {
+                setError('d-block alert-danger')
+                err.innerHTML = `Error ${response.status} ${response.statusText}`;
+                console.error(`Error ${response.status} ${response.statusText}`);
+            }
+            */
         } catch (error) {
             setError('d-block alert-danger')
             msg.innerHTML = `Error ${error}`;
