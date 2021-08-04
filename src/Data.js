@@ -24,10 +24,11 @@ export default function Data(props) {
     //const base_domain = Config.base_domain;
 
     const url_list = Config.api_domain + "/contribution/username/"+username;
+    const url_insert_data = Config.api_domain + "/data/";
     const url_insert = Config.api_domain + "/contribution/";
     const url_update = Config.api_domain + "/contribution/update/";
     const url_delete = Config.api_domain + "/contribution/delete/";
-    const url_upload = Config.geoserver_domain + "rest/workspaces/cifor/datastores/" + username + "/file.shp";
+    const url_upload = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + "/file.shp";
 
     const [isFormVisible, setFormVisible] = useState(false);
     const [isGeoserverVisible, setGeoserverVisible] = useState(false);
@@ -53,14 +54,14 @@ export default function Data(props) {
     const [url, setUrl] = useState('Automatically generated from geoserver response');
     const [path, setPath] = useState();
 
-    const url_reflect = Config.geoserver_domain + "wms/reflect?layers=cifor:";
-    const url_store = Config.geoserver_domain + "rest/workspaces/cifor/datastores/" + username + ".json";
-    const url_publish = Config.geoserver_domain + "rest/workspaces/cifor/datastores/" + username + "/external.shp";
+    const url_reflect = Config.geoserver_domain + "wms/reflect?layers=fta:";
+    const url_store = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + ".json";
+    const url_publish = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + "/external.shp";
     //http://localhost:8600/geoserver/rest/workspaces/cifor/datastores/roads/external.shp
     //http://localhost/geoserver/rest/workspaces/cifor/datastores/emhayusa.json
-    const url_featuretypes = Config.geoserver_domain + "rest/workspaces/cifor/datastores/" + username + "/featuretypes";
+    const url_featuretypes = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + "/featuretypes";
     //http://localhost/geoserver/rest/workspaces/cifor/datastores/emhayusa/featuretypes/ADMINISTRASIDESA_AR_25K.json
-    const url_wms = Config.geoserver_domain + "cifor/wms?service=WMS&version=1.1.0&request=GetMap&layers=cifor:"
+    const url_wms = Config.geoserver_domain + "fta/wms?service=WMS&version=1.1.0&request=GetMap&layers=fta:"
 
     //const [selectedStyle, setSelectedStyle] = useState();
 
@@ -435,7 +436,49 @@ export default function Data(props) {
 
 
         try {
+            var file = document.getElementById('custom-file'); //document.querySelector("#proposalFile");
+
+            const formData = new FormData();
+            formData.append('file', file.files[0]);
+            formData.append('username', username);
+            
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
+                    'Authorization': token 
+                },
+                body: formData
+            };
+
+            const response = await fetch (url_insert_data, requestOptions)
+          //console.log(response)
+    
+          var json = await response.json();
+          //console.log(json);
+          //console.log(json.status);
+        
+          if (response.status === 201) {
+            //console.log(data);
+                //setAlert('d-block alert-success')
+                //setError('d-none')
+                //msg.innerHTML = json.message;
+                if(path){
+                    publishData()
+                }    
+                //load_usulan();
+                //setId(0);
+                //setName("");
+                //setFilename("");
+                //setFormVisible(false);
+           }else{
+            setError('d-block alert-danger')  
+            err.innerHTML = `Error ${response.status} ${response.statusText}`;
+            console.error(`Error ${response.status} ${response.statusText}`);
+          }
+    
+
             // Fetch data from REST API
+            /*
             var file = document.getElementById('custom-file'); //document.querySelector("#proposalFile");
 
             const formData = new FormData();
@@ -466,7 +509,7 @@ export default function Data(props) {
                     Authorization: 'Basic ' + auth
                 }
             });
-            */
+            /
 
             var requestOptions = {
                 method: 'PUT',
@@ -489,7 +532,7 @@ export default function Data(props) {
             },
             body: formData
           };
-          */
+          /
             const response = await fetch(url_upload, requestOptions)
             //console.log(response)
 
@@ -515,13 +558,13 @@ export default function Data(props) {
                 err.innerHTML = `Error ${response.status} ${response.statusText}`;
                 console.error(`Error ${response.status} ${response.statusText}`);
             }
-
+            */
         } catch (error) {
             setError('d-block alert-danger')
             msg.innerHTML = `Error ${error}`;
             console.error(`Error ${error}`);
         }
-
+        
     };
 
     const publishData = async () => {
@@ -926,7 +969,7 @@ export default function Data(props) {
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Workspace</Form.Label>
-                            <Form.Control size="sm" className="font-11" type="text" value="cifor" disabled />
+                            <Form.Control size="sm" className="font-11" type="text" value="fta" disabled />
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Store</Form.Label>
