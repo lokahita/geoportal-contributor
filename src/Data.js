@@ -54,13 +54,14 @@ export default function Data(props) {
     const [shapeFile, setShapeFile] = useState();
     const [url, setUrl] = useState('Automatically generated from geoserver response');
     const [path, setPath] = useState();
+    const [fileName, setFileName] = useState();
 
     const url_reflect = Config.geoserver_domain + "wms/reflect?layers=fta:";
     const url_store = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + ".json";
     const url_publish = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + "/external.shp";
     //http://localhost:8600/geoserver/rest/workspaces/cifor/datastores/roads/external.shp
     //http://localhost/geoserver/rest/workspaces/cifor/datastores/emhayusa.json
-    const url_featuretypes = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + username + "/featuretypes";
+    const url_featuretypes = Config.geoserver_domain + "rest/workspaces/fta/datastores/" + fileName+"_"+username + "/featuretypes";
     //http://localhost/geoserver/rest/workspaces/cifor/datastores/emhayusa/featuretypes/ADMINISTRASIDESA_AR_25K.json
     const url_wms = Config.geoserver_domain + "fta/wms?service=WMS&version=1.1.0&request=GetMap&layers=fta:"
 
@@ -85,6 +86,7 @@ export default function Data(props) {
 
             JSZip.loadAsync(filesInput)                                   // 1) read the Blob
                 .then(function (zip) {
+                    setFileName(event.target.files[0].name.replace(".zip", ""))
                     /*
                     var dateAfter = new Date();
                     $title.append($("<span>", {
@@ -100,7 +102,7 @@ export default function Data(props) {
                             if (!zipEntry.name.includes(".xml")) {
                                 cek = true;
                                 setShapeFile(zipEntry.name.replace(".xml", ""))
-                                fetchStore(zipEntry.name.replace(".xml", ""))
+                                //fetchStore(zipEntry.name.replace(".xml", ""))
                             }
 
                         }
@@ -463,14 +465,29 @@ export default function Data(props) {
                 //setAlert('d-block alert-success')
                 //setError('d-none')
                 //msg.innerHTML = json.message;
-                if(path){
-                    publishData()
-                }    
+                //if(path){
+                //    publishData()
+                //}    
                 //load_usulan();
                 //setId(0);
                 //setName("");
                 //setFilename("");
                 //setFormVisible(false);
+                var reflect = document.getElementById('reflect');
+                reflect.innerHTML = "";
+                console.log(shapeFile);
+                console.log(url_reflect);
+                var img = document.createElement('img');
+                var refl = url_reflect + shapeFile
+                img.src = refl.replace(".shp", "");
+                img.addEventListener('load', (event) => {
+                    console.log('image has been loaded!');
+                    console.log(event);
+                    console.log(event.target.width);
+                    console.log(event.target.height);
+                    fetchGeoserver(event.target.width, event.target.height);
+                });
+                reflect.append(img);
            }else{
             setError('d-block alert-danger')  
             err.innerHTML = `Error ${response.status} ${response.statusText}`;
