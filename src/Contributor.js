@@ -14,8 +14,12 @@ import Dashboard from './Dashboard';
 import Data from './Data';
 import Metadata from './Metadata';
 
+import { getCookie } from './Helpers';
+
 export default function Contributor(props) {
     const [menuUtamaAktif, setMenuUtamaAktif] = useState('home');
+    
+    const username = getCookie('CONTRIBUTOR');
 
     var base = "px-2 py-1 pointer"
     var home = menuUtamaAktif === 'home' ? base + " bg-kuning" : base;
@@ -37,6 +41,7 @@ export default function Contributor(props) {
         <Row className="main-admin font-11">
             <Col lg={2} className="pt-3 bg-dark">
                 <h6 className="text-white ml-2">Dashboard</h6>
+                <p className="text-white ml-2">Logged in as <u>{username}</u></p>
                 <ListGroup className="ml-2">
                     <ListGroup.Item className={home} onClick={() => setMenuUtamaAktif('home')}>Home</ListGroup.Item>
                     <ListGroup.Item className={data} onClick={() => setMenuUtamaAktif('data')}>Upload Data</ListGroup.Item>
