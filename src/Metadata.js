@@ -16,7 +16,7 @@ export default function Metadata(props) {
     const  username = getCookie('CONTRIBUTOR');
     //const base_domain = Config.base_domain;
     
-    const url_list = Config.api_domain + "/metadata/";
+    const url_list = Config.api_domain + "/metadata/username/" + username;
     const url_insert = Config.api_domain + "/metadata/";
     const url_update = Config.api_domain + "/metadata/update/";
     const url_delete = Config.api_domain + "/metadata/delete/";
